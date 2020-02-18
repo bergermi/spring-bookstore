@@ -45,8 +45,8 @@ class CarControllerTest {
 		// When | Act
 		MvcResult result = mock.perform(MockMvcRequestBuilders.get("/cars")).andReturn();
 		// Then | Assert
-		List<Car> books = getCarsFromModel(result);
-		assertThat(books).hasSize(0);
+		List<Car> cars = getCarsFromModel(result);
+		assertThat(cars).hasSize(0);
 	}
 
 	@Test
@@ -90,17 +90,33 @@ class CarControllerTest {
 	@Test
 	void shouldBeAbleToModifyACar() throws Exception {
 		// Given | Arrange
+		givenACarInTheDatabase("Tesla Model 3");
+		Car carModified = new Car();
+		carModified.setModel("Tesla Model X");
 		// When
+		MvcResult result = mock.perform(MockMvcRequestBuilders.post("/car/upsert")
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+		        .flashAttr("car", carModified)).andReturn();
 		// Then
-		fail();
+		assertThat(result.getResponse().getStatus()).isEqualTo(302);
+		List<Car> results = carRepo.findAll(Example.of(carModified));
+		assertThat(results).hasSize(1);
+		assertThat(results.get(0).getModel()).isEqualTo("Tesla Model X");
 	}
 
 	@Test
 	void shouldBeAbleToDeleteACar() throws Exception {
 		// Given | Arrange
+		givenACarInTheDatabase("Tesla Model S");
+		Car carDeleted = new Car();
+		carDeleted.setModel("Tesla Model S");
 		// When
+		List<Car> cars = carRepo.findAll(Example.of(carDeleted));
+		MvcResult result = mock.perform(MockMvcRequestBuilders.get("/car/" + cars.get(0).getId() + "/delete")).andReturn();
 		// Then
-		fail();
+		assertThat(result.getResponse().getStatus()).isEqualTo(302);
+		List<Car> results = carRepo.findAll(Example.of(carDeleted));
+		assertThat(results).hasSize(0);
 	}
 
 	private List<Car> getCarsFromModel(MvcResult result) {

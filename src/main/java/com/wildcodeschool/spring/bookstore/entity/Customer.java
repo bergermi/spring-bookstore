@@ -11,11 +11,14 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import com.wildcodeschool.spring.bookstore.entity.carpool.Car;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -48,6 +51,9 @@ public class Customer implements UserDetails {
 	@OneToMany(mappedBy = "customer", cascade = CascadeType.REMOVE)
 	private List<Review> reviews;
 
+	@ManyToMany(mappedBy = "customers")
+	private List<Car> cars;
+		
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		GrantedAuthority authority = new SimpleGrantedAuthority("ROLE_CUSTOMER");
