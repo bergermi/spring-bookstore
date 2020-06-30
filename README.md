@@ -19,3 +19,4 @@ echo "SET FOREIGN_KEY_CHECKS=1;" >> src/main/resources/schema.sql
 sed -i '1iSET FOREIGN_KEY_CHECKS=0;' src/main/resources/data.sql
 echo "SET FOREIGN_KEY_CHECKS=1;" >> src/main/resources/data.sql
 ```
+
